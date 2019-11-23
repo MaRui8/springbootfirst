@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ch" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+</head>
+<script>
+    var websocket = null;
+
+    var host = document.location.host;
+    var username = "[[${userName}]]"; // 获得当前登录人员的userName
+    //判断当前浏览器是否支持WebSocket
+    if ('WebSocket' in window) {
+        websocket = new WebSocket('ws://' + host + '/globalWebSocket/' + username);
+    } else {
+        alert('当前浏览器 Not support websocket')
+    }
+
+    //连接发生错误的回调方法
+    websocket.onerror = function () {
+        setMessageInnerHTML("WebSocket连接发生错误");
+    };
+
+    //连接成功建立的回调方法
+    websocket.onopen = function () {
+        setMessageInnerHTML("WebSocket连接成功");
+    };
+
+
+    //接收到消息的回调方法
+    websocket.onmessage = function (event) {
+        setReceiveMessage(event.data);
+        var msg = eval("(" + event.data + ")");
+        if ("null" != msg.messageType) {
+            if (1 == msg.messageType) {
+                if ("null" != msg.stringMsg) {
+                    setReceiveMessage(msg.stringMsg);
+                }
+                if ("null" != msg.fileMsg) {
+                    setMessageInnerHTML(msg.senderName+"给您发了消息");
+                    //异步请求，取消不会导致websocket断链
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', "/messageExchange/getFile?filePath=" + msg.fileMsg, true);    // 也可以使用POST方式，根据接口
+                    xhr.responseType = "blob";
+                    xhr.onload = function () {
+                        if (this.status === 200) {
+                            var content = this.response;
+                            var aTag = document.createElement('a');
+                            var blob = new Blob([content]);
+                            var headerName = xhr.getResponseHeader("Content-disposition");
+                            var fileName = decodeURIComponent(headerName).substring(20);
+                            aTag.download = fileName;
+                            aTag.href = URL.createObjectURL(blob);
+                            aTag.click();
+                            URL.revokeObjectURL(blob);
+                        }
+                    };
+                    xhr.send()
+                }
+            }else {
+                if ("null" != msg.stringMsg) {
+                    setMessageInnerHTML(msg.stringMsg);
+                }
+            }
+            //同步请求，在取消下载时会导致websocket断链
+            // window.location.href="/messageExchange/getFile?filePath="+msg.fileMsg;
+        }
+    };
+
+    //连接关闭的回调方法
+    websocket.onclose = function () {
+        setMessageInnerHTML("WebSocket连接关闭");
+    };
+
+    //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+    window.onbeforeunload = function () {
+        closeWebSocket();
+    };
+
+    //关闭WebSocket连接
+    function closeWebSocket() {
+        websocket.close();
+    }
+
+    function setReceiveMessage(msg) {
+        document.getElementById("text_message_receive").innerText += msg;
+    }
+
+    //将消息显示在网页上
+    function setMessageInnerHTML(innerHTML) {
+        document.getElementById('message').innerHTML += innerHTML + '<br/>';
+    }
+</script>
+<body>
+<div id="message" style="color: red">
+</div>
+<div>
+    <textarea name="receiveMessage" id="text_message_receive" rows="20" cols="20"></textarea>
+</div>
+<form action="/messageExchange/sendMessage" enctype="multipart/form-data" method="post" target="frameName">
+    <label>消息</label>
+    <input type="text" name="receiverName" id="receiver_name" placeholder="接收者"><br>
+    <textarea name="sendMessageText" id="text_message_send" rows="20" cols="20"></textarea><br>
+    <input type="file" name="file" placeholder="选择文件"><label>文件需不大于20M</label><br>
+    <input type="submit" value="发送"/>
+</form>
+<iframe src="" frameborder="0" name="frameName"></iframe>
+</body>
+</html>
