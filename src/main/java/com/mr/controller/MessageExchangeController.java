@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
 
 @RestController
 @RequestMapping("messageExchange")
@@ -57,7 +58,7 @@ public class MessageExchangeController {
 
     @RequestMapping("getFile")
     public void getFile(String filePath, HttpServletResponse response) throws IOException {
-        response.setHeader("Content-Disposition", "attachment;fileName=" + filePath.substring(filePath.lastIndexOf("/") + 1));
+        response.setHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode(filePath.substring(filePath.lastIndexOf("/") + 1),"UTF-8"));
         File file = new File(filePath);
 
         byte[] bytes = new byte[1024 * 1024];
