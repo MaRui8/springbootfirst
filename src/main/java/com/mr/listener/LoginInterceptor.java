@@ -16,7 +16,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String uri = request.getRequestURI();
         //UTL:除了login.jsp是可以公开访问的，其他的URL都进行拦截控制
-        if (uri.equals("")||uri.equals("/")||uri.startsWith("/user/login")) {
+        if (uri.equals("")||uri.equals("/")||uri.startsWith("/user/login")||uri.equals("/favicon.ico")) {
             return true;
         }
         //获取session

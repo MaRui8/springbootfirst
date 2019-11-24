@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 @RestController
@@ -35,7 +36,7 @@ public class MessageExchangeController {
             if (!parentFile.exists()) {
                 parentFile.mkdirs();
             }
-            String fileName = file.getOriginalFilename();
+            String fileName = URLDecoder.decode(file.getOriginalFilename(),"UTF-8");
             filePath = parentFilePath + File.separator + fileName.substring(0, fileName.lastIndexOf(".")) + "_" + System.currentTimeMillis() + fileName.substring(fileName.lastIndexOf("."));
             file.transferTo(new File(filePath));
             logger.info("保存文件至" + filePath);

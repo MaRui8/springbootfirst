@@ -37,10 +37,10 @@
                     setReceiveMessage(msg.stringMsg);
                 }
                 if ("null" != msg.fileMsg) {
-                    setMessageInnerHTML(msg.senderName+"给您发了消息");
+                    setMessageInnerHTML(msg.senderName+"给您发了文件:"+msg.fileMsg);
                     //异步请求，取消不会导致websocket断链
                     var xhr = new XMLHttpRequest();
-                    xhr.open('GET', "/messageExchange/getFile?filePath=" + msg.fileMsg, true);    // 也可以使用POST方式，根据接口
+                    xhr.open('GET', "/messageExchange/getFile?filePath=" +msg.fileMsg, true);    // 也可以使用POST方式，根据接口
                     xhr.responseType = "blob";
                     xhr.onload = function () {
                         if (this.status === 200) {
