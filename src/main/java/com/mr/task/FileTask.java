@@ -16,7 +16,7 @@ public class FileTask {
 
     private Logger logger = LoggerFactory.getLogger(FileTask.class);
 
-    @Scheduled(cron = "* 0/30 * * * *")
+    @Scheduled(cron = "0 0/30 * * * *")
     public void deleteFile() {
         List<Integer> deleteNo = new ArrayList<>();
         Cache.getCacheFileMap().values().forEach(e -> {

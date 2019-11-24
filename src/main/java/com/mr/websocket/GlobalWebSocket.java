@@ -82,6 +82,7 @@ public class GlobalWebSocket {
                 return;
             }
             try {
+                webSocketMessage.setBrowserType(Cache.getUser(webSocketMessage.getReceiverName()).getBrowserType());
                 session.getBasicRemote().sendText(JsonUtil.mapper.writeValueAsString(webSocketMessage));
                 Cache.removeUserMessage(webSocketMessage.getReceiverName(), webSocketMessage.getNo());
             } catch (IOException e) {

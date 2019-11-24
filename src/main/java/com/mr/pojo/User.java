@@ -5,6 +5,8 @@ public class User {
     private String userName;
     private String password;
 
+    private byte browserType;
+
     public User() {
     }
 
@@ -27,5 +29,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public byte getBrowserType() {
+        return browserType;
+    }
+
+    public void setBrowserType(byte browserType) {
+        this.browserType = browserType;
     }
 }

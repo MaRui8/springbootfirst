@@ -7,6 +7,16 @@ import java.util.Date;
 public class WebSocketMessage {
 
     private Integer no;
+    /**
+     * 接收者的客户端类型
+     * 1：手机
+     * 2：电脑
+     */
+    private byte browserType;
+    /**
+     * 1：别人发的
+     * 其他：自己发的
+     */
     private byte messageType;
     private String stringMsg;
     private String fileMsg;
@@ -35,6 +45,14 @@ public class WebSocketMessage {
 
     public void setNo(Integer no) {
         this.no = no;
+    }
+
+    public byte getBrowserType() {
+        return browserType;
+    }
+
+    public void setBrowserType(byte browserType) {
+        this.browserType = browserType;
     }
 
     public byte getMessageType() {

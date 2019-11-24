@@ -6,7 +6,6 @@ import com.mr.websocket.WebSocketMessage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Cache {
@@ -24,7 +23,10 @@ public class Cache {
      * @return
      */
     public static List<WebSocketMessage> getUserMessage(String userName) {
-        return userMessageMap.get(userName);
+        synchronized (userMessageMap) {
+            List<WebSocketMessage> webSocketMessageList = userMessageMap.get(userName);
+            return webSocketMessageList;
+        }
     }
 
     /**
@@ -65,18 +67,29 @@ public class Cache {
     /**
      * 在线用户
      */
-    private static Map<String,Object> onlineUserMap = new ConcurrentHashMap<>(5);
+    private static Map<String,User> onlineUserMap = new ConcurrentHashMap<>(5);
 
     public static void addOnlineUser(String userName, User user){
-        onlineUserMap.put(userName,user);
+        synchronized (onlineUserMap) {
+            onlineUserMap.put(userName, user);
+        }
     }
 
     public static boolean userIsOnline(String userName){
-        return onlineUserMap.containsKey(userName);
+        synchronized (onlineUserMap) {
+            return onlineUserMap.containsKey(userName);
+        }
+    }
+    public static User getUser(String userName){
+        synchronized (onlineUserMap) {
+            return onlineUserMap.get(userName);
+        }
     }
 
     public static void removeOnlineUser(String userName){
-        onlineUserMap.remove(userName);
+        synchronized (onlineUserMap) {
+            onlineUserMap.remove(userName);
+        }
     }
 
 

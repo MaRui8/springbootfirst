@@ -38,32 +38,39 @@
                 }
                 if ("null" != msg.fileMsg) {
                     setMessageInnerHTML(msg.senderName+"给您发了文件:"+msg.fileMsg);
-                    //异步请求，取消不会导致websocket断链
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('GET', "/messageExchange/getFile?filePath=" +msg.fileMsg, true);    // 也可以使用POST方式，根据接口
-                    xhr.responseType = "blob";
-                    xhr.onload = function () {
-                        if (this.status === 200) {
-                            var content = this.response;
-                            var aTag = document.createElement('a');
-                            var blob = new Blob([content]);
-                            var headerName = xhr.getResponseHeader("Content-disposition");
-                            var fileName = decodeURIComponent(headerName).substring(20);
-                            aTag.download = fileName;
-                            aTag.href = URL.createObjectURL(blob);
-                            aTag.click();
-                            URL.revokeObjectURL(blob);
-                        }
-                    };
-                    xhr.send()
+
+                    if (2 == msg.browserType) {
+                        //PC页面
+                        //异步请求，取消不会导致websocket断链
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('POST', "/messageExchange/getFile?filePath=" + msg.fileMsg, true);    // 也可以使用POST方式，根据接口
+                        xhr.responseType = "blob";
+                        xhr.onload = function () {
+                            if (this.status === 200) {
+                                var content = this.response;
+                                var aTag = document.createElement('a');
+                                var blob = new Blob([content]);
+                                var headerName = xhr.getResponseHeader("Content-disposition");
+                                var fileName = decodeURIComponent(headerName).substring(20);
+                                aTag.download = fileName;
+                                aTag.href = URL.createObjectURL(blob);
+                                aTag.click();
+                                URL.revokeObjectURL(blob);
+                            }
+                        };
+                        xhr.send()
+                    }else {
+                        //手机
+                        // 同步请求，在电脑端浏览器会出现websocket断链
+                        window.location.href = "/messageExchange/getFile?filePath=" + msg.fileMsg;
+                    }
                 }
+
             }else {
                 if ("null" != msg.stringMsg) {
                     setMessageInnerHTML(msg.stringMsg);
                 }
             }
-            //同步请求，在取消下载时会导致websocket断链
-            // window.location.href="/messageExchange/getFile?filePath="+msg.fileMsg;
         }
     };
 
