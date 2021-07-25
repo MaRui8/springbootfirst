@@ -22,7 +22,7 @@ public class WebsocketUtil {
     }
 
     private static Object getFieldInstance(Object obj, String fieldPath) {
-        String fields[] = fieldPath.split("#");
+	    String[] fields = fieldPath.split("#");
         for (String field : fields) {
             obj = getField(obj, obj.getClass(), field);
             if (obj == null) {

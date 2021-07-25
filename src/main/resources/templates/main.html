@@ -31,15 +31,15 @@
     websocket.onmessage = function (event) {
         setReceiveMessage(event.data);
         var msg = eval("(" + event.data + ")");
-        if ("null" != msg.messageType) {
-            if (1 == msg.messageType) {
-                if ("null" != msg.stringMsg) {
+        if ("null" !== msg.messageType) {
+            if (1 === msg.messageType) {
+                if ("null" !== msg.stringMsg) {
                     setReceiveMessage(msg.stringMsg);
                 }
-                if ("null" != msg.fileMsg) {
-                    setMessageInnerHTML(msg.senderName+"给您发了文件:"+msg.fileMsg);
+                if (msg.senderName + "/null" !== msg.fileMsg) {
+                    setMessageInnerHTML(msg.senderName + "给您发了文件:" + msg.fileMsg.substr(msg.senderName.length));
 
-                    if (2 == msg.browserType) {
+                    if (2 === msg.browserType) {
                         //PC页面
                         //异步请求，取消不会导致websocket断链
                         var xhr = new XMLHttpRequest();
@@ -59,15 +59,15 @@
                             }
                         };
                         xhr.send()
-                    }else {
+                    } else {
                         //手机
                         // 同步请求，在电脑端浏览器会出现websocket断链
                         window.location.href = "/messageExchange/getFile?filePath=" + msg.fileMsg;
                     }
                 }
 
-            }else {
-                if ("null" != msg.stringMsg) {
+            } else {
+                if ("null" !== msg.stringMsg) {
                     setMessageInnerHTML(msg.stringMsg);
                 }
             }
@@ -97,20 +97,34 @@
     function setMessageInnerHTML(innerHTML) {
         document.getElementById('message').innerHTML += innerHTML + '<br/>';
     }
+
+
+    function _submit() {
+        document.getElementById("message_form").submit();
+        document.getElementById('message_form').reset();
+    }
 </script>
 <body>
 <div id="message" style="color: red">
 </div>
-<div>
-    <textarea name="receiveMessage" id="text_message_receive" rows="20" cols="20"></textarea>
+<div style="alignment: top">
+    <div>
+        <label>接受消息:</label>
+    </div>
+    <textarea name="receiveMessage" id="text_message_receive" disabled rows="20" cols="20"></textarea>
 </div>
-<form action="/messageExchange/sendMessage" enctype="multipart/form-data" method="post" target="frameName">
-    <label>消息</label>
-    <input type="text" name="receiverName" id="receiver_name" placeholder="接收者"><br>
+<form id="message_form" action="/messageExchange/sendMessage" enctype="multipart/form-data" method="post"
+      target="frameName">
+    <div>
+        <label>发送消息:</label>
+    </div>
     <textarea name="sendMessageText" id="text_message_send" rows="20" cols="20"></textarea><br>
-    <input type="file" name="file" placeholder="选择文件"><label>文件需不大于20M</label><br>
-    <input type="submit" value="发送"/>
+    <input type="file" name="file" id="file" placeholder="选择文件"><label>文件需不大于20M</label><br>
+    <input type="text" name="receiverName" id="receiver_name" placeholder="接收者"><br>
+    <input type="button" value="发送" onclick="_submit()"/>
 </form>
-<iframe src="" frameborder="0" name="frameName"></iframe>
+<iframe src="" frameborder="0" height="0" name="frameName">
+</iframe>
+
 </body>
 </html>

@@ -1,5 +1,6 @@
 package com.mr.listener;
 
+import com.mr.common.Constant;
 import com.mr.pojo.User;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -21,7 +22,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         }
         //获取session
         HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("userName");
+	    User user = (User) session.getAttribute(Constant.HTTP_SESSION_ATTRIBUTE);
         //判断session中是否有用户数据，如果有，则返回true，继续向下执行
         if (user != null) {
             return true;

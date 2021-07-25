@@ -6,5 +6,5 @@ import java.text.SimpleDateFormat;
 
 public class JsonUtil {
 
-    public static final JsonMapper mapper = JsonMapper.builder().defaultDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).build();
+	public static final JsonMapper MAPPER = JsonMapper.builder().defaultDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).build();
 }
