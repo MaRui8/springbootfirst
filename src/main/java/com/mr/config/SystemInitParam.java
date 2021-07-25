@@ -13,6 +13,7 @@ public class SystemInitParam {
 
 
 	private String whiteClientPath;
+	private String mailFrom;
 
 	public String getWhiteClientPath() {
 		return whiteClientPath;
@@ -20,5 +21,13 @@ public class SystemInitParam {
 
 	public void setWhiteClientPath(String whiteClientPath) {
 		this.whiteClientPath = whiteClientPath;
+	}
+
+	public String getMailFrom() {
+		return mailFrom;
+	}
+
+	public void setMailFrom(String mailFrom) {
+		this.mailFrom = mailFrom;
 	}
 }
